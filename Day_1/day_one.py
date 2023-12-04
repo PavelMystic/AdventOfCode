@@ -1,4 +1,14 @@
 def line_to_number(line: str) -> int:
+    """Function accepts one file line as string, decomposes it to single characters and then select 
+    those that are digits. The result is either the first one and the last one, interpreted as a two 
+    digit number. If there is no digit in the string, the default result is zero.
+
+    Args:
+        line (str): one obfuscated calibration value line
+
+    Returns:
+        int: the assumed calibration value
+    """
     digit_list: list[int] = [s for s in list(line) if s.isdigit()]
 
     if len(digit_list) > 0:
