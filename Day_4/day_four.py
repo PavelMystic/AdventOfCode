@@ -35,6 +35,9 @@ def line_to_numbers(line: str) -> tuple[int, list[int], list[int]]:
 
     return card_number, winning_numbers, ticket_numbers
 
+def evaluate_matches(winning_numbers: list[int], ticket_numbers: list[int]) -> set[int]:
+    return set(winning_numbers).intersection(set(ticket_numbers))
+
 def evaluate_card(winning_numbers: list[int], ticket_numbers: list[int]) -> int:
     """Function assigns points to a card based ont the winning and ticket numbers.
 
@@ -46,7 +49,7 @@ def evaluate_card(winning_numbers: list[int], ticket_numbers: list[int]) -> int:
         int: _description_
     """
 
-    good_numbers: set[int] = set(winning_numbers).intersection(set(ticket_numbers))
+    good_numbers: set[int] = evaluate_matches(winning_numbers, ticket_numbers)
 
     if good_numbers:
         return 2 ** (len(good_numbers) - 1)
@@ -84,9 +87,24 @@ if __name__ == "__main__":
 
     point_sum: int = 0
 
+    points: list[int] = []
+    count: list[int] = []
+
     with open("./Day_4/input.txt", "r") as file:
         for line in file:
             card_number, winning_numbers, ticket_numbers = line_to_numbers(line)
+            points.append(len(evaluate_matches(winning_numbers, ticket_numbers)))
+            count.append(1) # one original at the beginning
             point_sum += evaluate_card(winning_numbers, ticket_numbers)
 
+    for card_idx, point in enumerate(points):
+
+        for count_idx in range(count[card_idx]):
+
+            for point_idx in range(point):
+
+                count[card_idx + point_idx + 1] += 1
+    
+
     print(point_sum)
+    print(sum(count))
