@@ -1,7 +1,17 @@
+"""Solution of the Day 4 assignment."""
 import re
 
 
 def extract_integers(text: str) -> list[str]:
+    """This function extracts list of integers from string. Each integer should be separated by 
+    space.
+
+    Args:
+        text (str): string of number repsenting characters, numbers separated by spaces
+
+    Returns:
+        list[str]: extracted numbers
+    """
     return re.findall(r"\d+", text)
 
 
@@ -36,6 +46,15 @@ def line_to_numbers(line: str) -> tuple[int, list[int], list[int]]:
     return card_number, winning_numbers, ticket_numbers
 
 def evaluate_matches(winning_numbers: list[int], ticket_numbers: list[int]) -> set[int]:
+    """Function evaluates matches between ticket and winning numbers. 
+
+    Args:
+        winning_numbers (list[int]): winning numbers
+        ticket_numbers (list[int]): ticket numbers
+
+    Returns:
+        set[int]: matching numbers
+    """
     return set(winning_numbers).intersection(set(ticket_numbers))
 
 def evaluate_card(winning_numbers: list[int], ticket_numbers: list[int]) -> int:
@@ -58,6 +77,11 @@ def evaluate_card(winning_numbers: list[int], ticket_numbers: list[int]) -> int:
 
 
 def test() -> bool:
+    """Test function based on the examples from assigment.
+
+    Returns:
+        bool: success
+    """
     lines: list[str] = [
         "Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53",
         "Card 2: 13 32 20 16 61 | 61 30 68 82 17 32 24 19",
@@ -81,30 +105,34 @@ def test() -> bool:
 
     return all(marks)
 
-
-if __name__ == "__main__":
-    print(test())
+def main() -> None:
+    """Main function of the solution.
+    """
 
     point_sum: int = 0
 
     points: list[int] = []
     count: list[int] = []
 
-    with open("./Day_4/input.txt", "r") as file:
+    with open("./Day_4/input.txt", "r", encoding="utf-8") as file:
         for line in file:
-            card_number, winning_numbers, ticket_numbers = line_to_numbers(line)
+            _, winning_numbers, ticket_numbers = line_to_numbers(line)
             points.append(len(evaluate_matches(winning_numbers, ticket_numbers)))
             count.append(1) # one original at the beginning
             point_sum += evaluate_card(winning_numbers, ticket_numbers)
 
     for card_idx, point in enumerate(points):
 
-        for count_idx in range(count[card_idx]):
+        for _ in range(count[card_idx]):
 
             for point_idx in range(point):
 
                 count[card_idx + point_idx + 1] += 1
-    
 
     print(point_sum)
     print(sum(count))
+
+
+if __name__ == "__main__":
+    print(test())
+    main()
