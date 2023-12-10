@@ -55,9 +55,11 @@ def load_file(file_path: str) -> list[RaceRecord]:
     with open(file_path, "r", encoding="utf-8") as file:
         for line in file:
             if "Time:" in line:
-                times = [int(time_text) for time_text in extract_integers(line.replace("Time:", "").strip())]
+                # times = [int(time_text) for time_text in extract_integers(line.replace("Time:", "").strip())]
+                times = [int(reduce(lambda x, y: x + y, extract_integers(line.replace("Time:", "").strip())))]
             elif "Distance:" in line:
-                distances = [int(distance_text) for distance_text in extract_integers(line.replace("Distance", "").strip())]
+                # distances = [int(distance_text) for distance_text in extract_integers(line.replace("Distance", "").strip())]
+                distances = [int(reduce(lambda x, y: x + y, extract_integers(line.replace("Distance", "").strip())))]
     
     races = [RaceRecord(time, distance) for time, distance in zip(times, distances)]
 
