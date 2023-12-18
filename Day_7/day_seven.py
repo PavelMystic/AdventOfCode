@@ -8,7 +8,6 @@ CARD_STRENGTH: dict[str, int] = {
     "A": 12,
     "K": 11,
     "Q": 10,
-    "J": 9,
     "T": 8,
     "9": 7,
     "8": 6,
@@ -18,6 +17,7 @@ CARD_STRENGTH: dict[str, int] = {
     "4": 2,
     "3": 1,
     "2": 0,
+    "J": -1,
 }
 CardHist = dict[str, int]
 
@@ -66,6 +66,8 @@ def get_type(hand: str) -> int:
             card_hist[card] += 1
         else:
             card_hist[card] = 1
+
+    card_hist = apply_jokers(card_hist)
 
     if is_five_of_a_kind(card_hist):
         return 6
@@ -167,6 +169,40 @@ def is_one_pair(card_hist: CardHist) -> bool:
     """
 
     return sum((elem == 2 for elem in card_hist.values())) == 1
+
+
+def apply_jokers(card_hist: CardHist) -> CardHist:
+    """This function modifies the card histogram in such a way, that if there are some jokers in the
+    hand, they are used to enhance it so that the type is as high as possible.
+
+    Args:
+        card_hist (CardHist): dictionary of card name and its count in hand (only card that
+        are actually in the hand)
+    Returns:
+        CardHist: modified card histogram
+    """
+
+    if "J" not in card_hist.keys():
+        return card_hist
+
+    n_jokers: int = card_hist["J"]
+
+    if n_jokers == 5:
+        return card_hist
+
+    max_count: int = max((card_hist[key] for key in card_hist.keys() if "J" not in key))
+
+    max_cards: list[str] = [
+        key
+        for key in card_hist.keys()
+        if card_hist[key] == max_count and "J" not in key
+    ]
+    max_cards = sorted(max_cards, key=lambda x: CARD_STRENGTH[x])
+
+    card_hist[max_cards[0]] += n_jokers
+    del card_hist["J"]
+
+    return card_hist
 
 
 def compare_hands(first_hand: str, second_hand: str) -> int:
